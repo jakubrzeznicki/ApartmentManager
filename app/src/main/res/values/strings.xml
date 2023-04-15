@@ -1,3 +1,10 @@
 <resources>
+    <!-- Home Screen-->
     <string name="app_name">ApartmentManager</string>
+    <string name="apartment_pins">Apartment pins</string>
+    <string name="create">Create</string>
+    <string name="lack_of_pins">There are no pins\nClick + button to create</string>
+    <string name="name">Name</string>
+    <string name="code">Code</string>
+    <string name="lock">Lock</string>
 </resources>
