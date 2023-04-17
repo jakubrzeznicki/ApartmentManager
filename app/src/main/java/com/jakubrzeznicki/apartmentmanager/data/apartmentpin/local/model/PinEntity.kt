@@ -13,5 +13,6 @@ class PinEntity : RealmObject {
 
     companion object {
         const val CODE = "code"
+        const val NAME = "name"
     }
 }

@@ -7,8 +7,9 @@ import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
  * Created by jrzeznicki on 14/04/2023.
  */
 fun PinEntity.toPin(): Pin = Pin(name = name, code = code)
+
 fun Pin.toPinEntity(): PinEntity =
     PinEntity().also {
-        it.name = this.name
-        it.code = this.code
+        it.name = name
+        it.code = code
     }

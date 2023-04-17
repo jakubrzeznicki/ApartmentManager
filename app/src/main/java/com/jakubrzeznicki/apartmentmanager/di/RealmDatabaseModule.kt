@@ -19,12 +19,9 @@ object RealmDatabaseModule {
     @Singleton
     @Provides
     fun provideRealmDatabase(): Realm {
-        val config = RealmConfiguration.Builder(
-            schema = setOf(PinEntity::class)
-        )
+        val configuration = RealmConfiguration.Builder(schema = setOf(PinEntity::class))
             .compactOnLaunch()
             .build()
-        return Realm.open(config)
+        return Realm.open(configuration)
     }
-
 }

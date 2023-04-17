@@ -1,6 +1,8 @@
 package com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local
 
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity
+import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity.Companion.CODE
+import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity.Companion.NAME
 import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.map
  */
 class ApartmentPinLocal(private val realm: Realm) : ApartmentPinLocalDataSource {
     override fun getPins(): Flow<List<PinEntity>> {
-        return realm.query<PinEntity>().asFlow().map { it.list }
+        return realm.query<PinEntity>().sort(NAME).asFlow().map { it.list }
     }
 
     override suspend fun createPin(pin: PinEntity) {
@@ -21,9 +23,7 @@ class ApartmentPinLocal(private val realm: Realm) : ApartmentPinLocalDataSource 
 
     override suspend fun deletePin(code: String): RepositoryResult {
         return realm.write {
-            val pin = query<PinEntity>(query = "${PinEntity.CODE} == $FIRST_PARAMETER", code)
-                .first()
-                .find()
+            val pin = query<PinEntity>(query = "$CODE == $FIRST_PARAMETER", code).first().find()
             try {
                 pin?.let { delete(it) }
                 RepositoryResult.Success

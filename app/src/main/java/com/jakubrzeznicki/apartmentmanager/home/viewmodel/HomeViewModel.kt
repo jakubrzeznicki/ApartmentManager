@@ -3,7 +3,8 @@ package com.jakubrzeznicki.apartmentmanager.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
-import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
+import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
+import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,11 +27,11 @@ class HomeViewModel @Inject constructor(
             viewModelState.value.toUiState()
         )
 
-    init {
+    fun getPins() {
         viewModelScope.launch {
             apartmentPinRepository.getPins().collect { pins ->
                 viewModelState.update {
-                    it.copy(pins = testedPins)
+                    it.copy(pins = pins)
                 }
             }
         }
@@ -38,15 +39,19 @@ class HomeViewModel @Inject constructor(
 
     fun deletePin(code: String) {
         viewModelScope.launch {
-            apartmentPinRepository.deletePin(code)
+            val status = when (val result = apartmentPinRepository.deletePin(code)) {
+                RepositoryResult.Success -> HomeStatus.PinDeleted
+                is RepositoryResult.Error -> HomeStatus.PinDeleteError(result.errorMessage)
+            }
+            viewModelState.update { it.copy(status = status) }
         }
     }
 
-    private companion object {
-        val testedPins = listOf<Pin>(
-            Pin("3452643", "Do domu"),
-            Pin("0204642", "Do pracy"),
-            Pin("596532", "Do szkoly"),
-        )
+    fun showConfirmDeleteDialog(showDialog: Boolean) {
+        viewModelState.update { it.copy(shouldShowDeleteDialog = showDialog) }
+    }
+
+    fun resetStatus() {
+        viewModelState.update { it.copy(status = HomeStatus.NoStatus) }
     }
 }
