@@ -23,8 +23,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appState: ApartmentManagerAppState = rememberSnackbarDemoAppState()
             Scaffold(
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = MaterialTheme.colorScheme.onBackground,
                 snackbarHost = { SnackbarHost(hostState = appState.snackbarHostState) }
             ) {
                 CustomNavHost(

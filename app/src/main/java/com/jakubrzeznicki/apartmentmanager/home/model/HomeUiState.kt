@@ -10,7 +10,7 @@ sealed interface HomeUiState {
 
     data class HasPins(
         override val status: HomeStatus,
-        val shouldShowDeleteDialog: Boolean,
+        val deletePinData: DeletePinData,
         val pins: List<Pin>
     ) : HomeUiState
 

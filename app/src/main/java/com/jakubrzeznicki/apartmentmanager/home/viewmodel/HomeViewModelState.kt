@@ -1,6 +1,7 @@
 package com.jakubrzeznicki.apartmentmanager.home.viewmodel
 
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
+import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeUiState
 
@@ -9,12 +10,12 @@ import com.jakubrzeznicki.apartmentmanager.home.model.HomeUiState
  */
 data class HomeViewModelState(
     val status: HomeStatus = HomeStatus.NoStatus,
-    val shouldShowDeleteDialog: Boolean = false,
+    val deletePinData: DeletePinData = DeletePinData(),
     val pins: List<Pin> = emptyList()
 ) {
     fun toUiState(): HomeUiState = if (pins.isEmpty()) {
         HomeUiState.NoData(status)
     } else {
-        HomeUiState.HasPins(status, shouldShowDeleteDialog, pins)
+        HomeUiState.HasPins(status, deletePinData, pins)
     }
 }

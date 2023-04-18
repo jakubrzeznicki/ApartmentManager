@@ -3,19 +3,19 @@
     <string name="app_name">ApartmentManager</string>
     <string name="apartment_pins">Apartment PINs</string>
     <string name="create">Create</string>
-    <string name="lack_of_pins">There are no pins\nClick + button to create</string>
+    <string name="lack_of_pins">There are no PINs\nClick + button to create</string>
     <string name="name">Name</string>
     <string name="code">Code</string>
     <string name="lock">Lock</string>
     <string name="delete">Delete</string>
-    <string name="delete_pin_title">Delete Pin?</string>
-    <string name="delete_pin_description">You will delete pin permanently and it will not be available anymore</string>
+    <string name="delete_pin_title">Delete PIN?</string>
+    <string name="delete_pin_description">You will delete PIN permanently and it will not be available anymore</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_deleted_successfully">Pin deleted successfully</string>
+    <string name="pin_deleted_successfully">PIN deleted successfully</string>
 
-    <!-- Home Screen-->
-    <string name="create_pin">Create Pin</string>
+    <!-- Create Pin Screen-->
+    <string name="create_pin">Create PIN</string>
     <string name="navigate_up">Navigate up</string>
     <string name="empty_name_error">You have empty name. Please fill it</string>
-    <string name="pin_created_successfully">Pin created successfully</string>
+    <string name="pin_created_successfully">PIN created successfully</string>
 </resources>

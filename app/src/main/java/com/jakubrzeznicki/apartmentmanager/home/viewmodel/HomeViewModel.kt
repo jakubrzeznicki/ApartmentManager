@@ -3,6 +3,7 @@ package com.jakubrzeznicki.apartmentmanager.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
+import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
 import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,8 +48,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun showConfirmDeleteDialog(showDialog: Boolean) {
-        viewModelState.update { it.copy(shouldShowDeleteDialog = showDialog) }
+    fun showConfirmDeleteDialog(deletePinData: DeletePinData) {
+        viewModelState.update { it.copy(deletePinData = deletePinData) }
     }
 
     fun resetStatus() {

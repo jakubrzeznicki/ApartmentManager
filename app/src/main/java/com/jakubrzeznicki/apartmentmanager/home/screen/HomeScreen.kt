@@ -10,9 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jakubrzeznicki.apartmentmanager.R
+import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeUiState
 import com.jakubrzeznicki.apartmentmanager.home.viewmodel.HomeViewModel
@@ -60,7 +59,7 @@ private fun HomeScreen(
     listState: LazyListState,
     onCreateNewPinClick: () -> Unit,
     onDeletePinClick: (String) -> Unit,
-    showConfirmDeleteDialog: (Boolean) -> Unit,
+    showConfirmDeleteDialog: (DeletePinData) -> Unit,
     resetStatus: () -> Unit,
     showSnackbar: (String, SnackbarDuration) -> Unit
 ) {
@@ -87,7 +86,7 @@ private fun HomeScreen(
                         PinCard(
                             name = it.name,
                             code = it.code,
-                            shouldShowCinfirmDeleteDialog = uiState.shouldShowDeleteDialog,
+                            deletePinData = uiState.deletePinData,
                             onDeletePinClick = onDeletePinClick,
                             showConfirmDeleteDialog = showConfirmDeleteDialog
                         )
@@ -177,9 +176,9 @@ private fun EmptyState(modifier: Modifier, textId: Int) {
 private fun PinCard(
     name: String,
     code: String,
-    shouldShowCinfirmDeleteDialog: Boolean,
+    deletePinData: DeletePinData,
     onDeletePinClick: (String) -> Unit,
-    showConfirmDeleteDialog: (Boolean) -> Unit
+    showConfirmDeleteDialog: (DeletePinData) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -210,7 +209,7 @@ private fun PinCard(
                 PinItemRow(value = code, labelId = R.string.code)
             }
             DeletePinButton(
-                shouldShowConfirmDeleteDialog = shouldShowCinfirmDeleteDialog,
+                deletePinData = deletePinData,
                 code = code,
                 onDeletePinClick = onDeletePinClick,
                 showConfirmDeleteDialog = showConfirmDeleteDialog
@@ -262,16 +261,16 @@ private fun PinItemRow(modifier: Modifier = Modifier, value: String, labelId: In
 
 @Composable
 private fun DeletePinButton(
-    shouldShowConfirmDeleteDialog: Boolean,
+    deletePinData: DeletePinData,
     code: String,
     onDeletePinClick: (String) -> Unit,
-    showConfirmDeleteDialog: (Boolean) -> Unit
+    showConfirmDeleteDialog: (DeletePinData) -> Unit
 ) {
     IconButton(
         modifier = Modifier
             .size(50.dp)
             .padding(horizontal = 16.dp),
-        onClick = { showConfirmDeleteDialog(true) }
+        onClick = { showConfirmDeleteDialog(DeletePinData(code, true)) }
     ) {
         Icon(
             modifier = Modifier.size(50.dp),
@@ -280,11 +279,11 @@ private fun DeletePinButton(
             tint = MaterialTheme.colorScheme.onPrimary
         )
     }
-    if (shouldShowConfirmDeleteDialog) {
+    if (deletePinData.shouldShowConfirmDialog && code == deletePinData.code) {
         InformationDialog(
             titleId = R.string.delete_pin_title,
             textId = R.string.delete_pin_description,
-            code = code,
+            code = deletePinData.code,
             confirmButtonTextId = R.string.delete,
             confirmButtonAction = onDeletePinClick,
             dismissAction = showConfirmDeleteDialog
@@ -299,15 +298,16 @@ private fun InformationDialog(
     code: String,
     confirmButtonTextId: Int,
     confirmButtonAction: (String) -> Unit,
-    dismissAction: (Boolean) -> Unit
+    dismissAction: (DeletePinData) -> Unit
 ) {
+    val deletePinData = remember { mutableStateOf(DeletePinData(code, false)) }
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         title = { Text(stringResource(titleId)) },
         text = { Text(stringResource(textId)) },
         dismissButton = {
             Button(
-                onClick = { dismissAction(false) },
+                onClick = { dismissAction(deletePinData.value) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DarkBlue.copy(alpha = 0.6F),
                     contentColor = MaterialTheme.colorScheme.onSecondary
@@ -320,7 +320,7 @@ private fun InformationDialog(
             Button(
                 onClick = {
                     confirmButtonAction(code)
-                    dismissAction(false)
+                    dismissAction(deletePinData.value)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DarkBlue,
@@ -330,7 +330,7 @@ private fun InformationDialog(
                 Text(text = stringResource(confirmButtonTextId))
             }
         },
-        onDismissRequest = { dismissAction(false) }
+        onDismissRequest = { dismissAction(deletePinData.value) }
     )
 }
 
