@@ -13,7 +13,11 @@ import kotlinx.coroutines.flow.map
  * Created by jrzeznicki on 14/04/2023.
  */
 class ApartmentPinLocal(private val realm: Realm) : ApartmentPinLocalDataSource {
-    override fun getPins(): Flow<List<PinEntity>> {
+    override fun getPins(): List<PinEntity> {
+        return realm.query<PinEntity>().sort(NAME).find()
+    }
+
+    override fun getLivePins(): Flow<List<PinEntity>> {
         return realm.query<PinEntity>().sort(NAME).asFlow().map { it.list }
     }
 

@@ -13,9 +13,11 @@ import kotlinx.coroutines.flow.map
  */
 class ApartmentPinRepository(private val local: ApartmentPinLocalDataSource) :
     ApartmentPinDataSource {
+    override suspend fun getPins(): List<Pin> =
+        local.getPins().map { pins -> pins.toPin() }
 
-    override fun getPins(): Flow<List<Pin>> =
-        local.getPins().map { pins -> pins.map { it.toPin() } }
+    override fun getLivePins(): Flow<List<Pin>> =
+        local.getLivePins().map { pins -> pins.map { it.toPin() } }
 
     override suspend fun createPin(pin: Pin) {
         local.createPin(pin.toPinEntity())

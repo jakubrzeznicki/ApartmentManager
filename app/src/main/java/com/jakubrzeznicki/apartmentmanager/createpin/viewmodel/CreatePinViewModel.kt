@@ -28,6 +28,7 @@ class CreatePinViewModel @Inject constructor(
         )
 
     init {
+        getPins()
         viewModelState.update {
             val digits = generateRandomDigits()
             it.copy(code = generateCode(digits))
@@ -49,9 +50,22 @@ class CreatePinViewModel @Inject constructor(
                 viewModelState.update { it.copy(status = CreatePinStatus.EmptyName) }
                 return@launch
             }
+            val nameIsNotUnique =
+                viewModelState.value.savedPins.map { it.name }.contains(viewModelState.value.name)
+            if (nameIsNotUnique) {
+                viewModelState.update { it.copy(status = CreatePinStatus.NameIsNotUnique) }
+                return@launch
+            }
             val pin = Pin(viewModelState.value.code, viewModelState.value.name)
             apartmentPinRepository.createPin(pin)
             viewModelState.update { it.copy(status = CreatePinStatus.PinCreated) }
+        }
+    }
+
+    private fun getPins() {
+        viewModelScope.launch {
+            val pins = apartmentPinRepository.getPins()
+            viewModelState.update { it.copy(savedPins = pins) }
         }
     }
 

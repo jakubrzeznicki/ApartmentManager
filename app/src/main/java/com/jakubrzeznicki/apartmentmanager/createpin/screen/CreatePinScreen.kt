@@ -195,6 +195,10 @@ private fun CustomSnackbar(
                 showSnackbar(emptyNameMessage, SnackbarDuration.Short)
                 resetStatus()
             }
+            CreatePinStatus.NameIsNotUnique -> {
+                showSnackbar("Namess", SnackbarDuration.Short)
+                resetStatus()
+            }
             CreatePinStatus.NoStatus -> Unit
         }
     }

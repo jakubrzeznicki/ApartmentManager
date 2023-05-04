@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 14/04/2023.
  */
 interface ApartmentPinDataSource {
-    fun getPins(): Flow<List<Pin>>
+    suspend fun getPins() : List<Pin>
+    fun getLivePins(): Flow<List<Pin>>
     suspend fun createPin(pin: Pin)
     suspend fun deletePin(code: String): RepositoryResult
 }

@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
 
     fun getPins() {
         viewModelScope.launch {
-            apartmentPinRepository.getPins().collect { pins ->
+            apartmentPinRepository.getLivePins().collect { pins ->
                 viewModelState.update {
                     it.copy(pins = pins)
                 }

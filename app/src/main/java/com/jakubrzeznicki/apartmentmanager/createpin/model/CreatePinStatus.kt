@@ -5,6 +5,7 @@ package com.jakubrzeznicki.apartmentmanager.createpin.model
  */
 sealed interface CreatePinStatus {
     object EmptyName : CreatePinStatus
+    object NameIsNotUnique : CreatePinStatus
     object PinCreated : CreatePinStatus
     object NoStatus : CreatePinStatus
 }
