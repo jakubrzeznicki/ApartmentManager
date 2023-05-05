@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
-import com.jakubrzeznicki.apartmentmanager.di.ViewModelScope
+import com.jakubrzeznicki.apartmentmanager.di.ScreenScope
 import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
 import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by jrzeznicki on 14/04/2023.
  */
 
-@ViewModelScope
+@ScreenScope
 class HomeViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.createpin.model.CreatePinStatus
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
-import com.jakubrzeznicki.apartmentmanager.di.ViewModelScope
+import com.jakubrzeznicki.apartmentmanager.di.ScreenScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 /**
  * Created by jrzeznicki on 15/04/2023.
  */
-@ViewModelScope
+@ScreenScope
 class CreatePinViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {

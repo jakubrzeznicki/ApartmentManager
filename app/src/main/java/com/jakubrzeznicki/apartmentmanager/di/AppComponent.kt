@@ -23,5 +23,4 @@ interface AppComponent {
 
     fun homeComponent(): HomeComponent.Factory
     fun createPinComponent(): CreatePinComponent.Factory
-    //fun inject(activity: MainActivity)
 }

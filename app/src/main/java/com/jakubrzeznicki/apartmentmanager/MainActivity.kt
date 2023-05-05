@@ -12,10 +12,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jakubrzeznicki.apartmentmanager.createpin.CreatePinComponent
 import com.jakubrzeznicki.apartmentmanager.createpin.screen.CreatePinRoute
+import com.jakubrzeznicki.apartmentmanager.createpin.viewmodel.CreatePinViewModel
 import com.jakubrzeznicki.apartmentmanager.home.HomeComponent
 import com.jakubrzeznicki.apartmentmanager.home.screen.HomeRoute
+import com.jakubrzeznicki.apartmentmanager.home.viewmodel.HomeViewModel
 import com.jakubrzeznicki.apartmentmanager.navigation.ApartmentManagerDestinations
-import com.jakubrzeznicki.apartmentmanager.utils.viewModel
+import com.jakubrzeznicki.apartmentmanager.utils.daggerViewModel
 
 class MainActivity : ComponentActivity() {
     lateinit var homeComponent: HomeComponent
@@ -23,12 +25,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeComponent =
-            (application as ApartmentManagerApplication).appComponent.homeComponent().create()
-        homeComponent.inject(this)
-        createPinComponent =
-            (application as ApartmentManagerApplication).appComponent.createPinComponent().create()
-        createPinComponent.inject(this)
         setContent {
             val appState: ApartmentManagerAppState = rememberSnackbarDemoAppState()
             Scaffold(
@@ -58,7 +54,12 @@ class MainActivity : ComponentActivity() {
             startDestination = ApartmentManagerDestinations.HOME_ROUTE
         ) {
             composable(ApartmentManagerDestinations.HOME_ROUTE) {
-                val homeViewModel by viewModel(activity) { homeComponent.homeViewModel }
+                val homeComponent =
+                    (application as ApartmentManagerApplication).appComponent.homeComponent()
+                        .create()
+                val homeViewModel: HomeViewModel = daggerViewModel {
+                    homeComponent.getViewModel()
+                }
                 HomeRoute(
                     viewModel = homeViewModel,
                     showSnackbar = showSnackbar,
@@ -68,7 +69,12 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(ApartmentManagerDestinations.CREATE_PIN_ROUTE) {
-                val createPinViewModel by viewModel(activity) { createPinComponent.createPinViewModel }
+                val createPinComponent =
+                    (application as ApartmentManagerApplication).appComponent.createPinComponent()
+                        .create()
+                val createPinViewModel: CreatePinViewModel = daggerViewModel {
+                    createPinComponent.getViewModel()
+                }
                 CreatePinRoute(
                     viewModel = createPinViewModel,
                     showSnackbar = showSnackbar,
