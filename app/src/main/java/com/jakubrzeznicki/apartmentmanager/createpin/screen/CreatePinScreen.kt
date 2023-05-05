@@ -1,5 +1,6 @@
 package com.jakubrzeznicki.apartmentmanager.createpin.screen
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jakubrzeznicki.apartmentmanager.R
 import com.jakubrzeznicki.apartmentmanager.createpin.model.CreatePinStatus
@@ -30,10 +30,11 @@ import com.jakubrzeznicki.apartmentmanager.ui.theme.Typography
  */
 @Composable
 fun CreatePinRoute(
-    viewModel: CreatePinViewModel = hiltViewModel(),
+    viewModel: CreatePinViewModel,
     showSnackbar: (String, SnackbarDuration) -> Unit,
     onNavigateUp: () -> Unit
 ) {
+    Log.d("TEST_LOG", "CeratePinViewModel hashcode - ${viewModel.hashCode()}")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     CreatePinScreen(
         uiState = uiState,

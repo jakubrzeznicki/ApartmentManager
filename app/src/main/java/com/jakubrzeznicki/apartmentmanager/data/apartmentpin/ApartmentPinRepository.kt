@@ -7,11 +7,14 @@ import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
 import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by jrzeznicki on 14/04/2023.
  */
-class ApartmentPinRepository(private val local: ApartmentPinLocalDataSource) :
+@Singleton
+class ApartmentPinRepository @Inject constructor(private val local: ApartmentPinLocalDataSource) :
     ApartmentPinDataSource {
     override suspend fun getPins(): List<Pin> =
         local.getPins().map { pins -> pins.toPin() }

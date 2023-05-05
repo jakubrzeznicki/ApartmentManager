@@ -1,12 +1,12 @@
 package com.jakubrzeznicki.apartmentmanager.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
 import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
 import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,7 +15,6 @@ import javax.inject.Inject
  * Created by jrzeznicki on 14/04/2023.
  */
 
-@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {
@@ -54,5 +53,10 @@ class HomeViewModel @Inject constructor(
 
     fun resetStatus() {
         viewModelState.update { it.copy(status = HomeStatus.NoStatus) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("TEST_LOG", "onCleared HomeViewModel")
     }
 }

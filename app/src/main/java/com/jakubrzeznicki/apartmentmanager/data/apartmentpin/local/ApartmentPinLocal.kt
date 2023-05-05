@@ -8,11 +8,15 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by jrzeznicki on 14/04/2023.
  */
-class ApartmentPinLocal(private val realm: Realm) : ApartmentPinLocalDataSource {
+@Singleton
+class ApartmentPinLocal @Inject constructor(private val realm: Realm) :
+    ApartmentPinLocalDataSource {
     override fun getPins(): List<PinEntity> {
         return realm.query<PinEntity>().sort(NAME).find()
     }

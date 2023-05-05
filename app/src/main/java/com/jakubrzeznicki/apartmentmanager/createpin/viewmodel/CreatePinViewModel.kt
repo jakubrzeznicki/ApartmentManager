@@ -1,12 +1,12 @@
 package com.jakubrzeznicki.apartmentmanager.createpin.viewmodel
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakubrzeznicki.apartmentmanager.createpin.model.CreatePinStatus
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,7 +14,6 @@ import javax.inject.Inject
 /**
  * Created by jrzeznicki on 15/04/2023.
  */
-@HiltViewModel
 class CreatePinViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {
@@ -91,5 +90,10 @@ class CreatePinViewModel @Inject constructor(
 
     private companion object {
         const val SEPARATOR = ""
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("TEST_LOG", "onCleared CeratePinViewModel")
     }
 }

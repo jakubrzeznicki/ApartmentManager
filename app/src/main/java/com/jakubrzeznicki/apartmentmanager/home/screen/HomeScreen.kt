@@ -1,5 +1,6 @@
 package com.jakubrzeznicki.apartmentmanager.home.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jakubrzeznicki.apartmentmanager.R
 import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
@@ -35,10 +35,11 @@ import com.jakubrzeznicki.apartmentmanager.ui.theme.Typography
  */
 @Composable
 fun HomeRoute(
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel,
     showSnackbar: (String, SnackbarDuration) -> Unit,
     onCreatePinClick: () -> Unit
 ) {
+    Log.d("TEST_LOG", "HomeViewModel hashcode - ${viewModel.hashCode()}")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pinListState = rememberLazyListState()
     LaunchedEffect(key1 = "PLAYERS_KEY") { viewModel.getPins() }
