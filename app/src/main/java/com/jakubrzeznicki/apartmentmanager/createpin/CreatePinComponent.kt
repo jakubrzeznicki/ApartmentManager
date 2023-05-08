@@ -11,9 +11,14 @@ import dagger.Subcomponent
 @Subcomponent(modules = [CreatePinModule::class])
 interface CreatePinComponent {
 
-    @Subcomponent.Factory
-    interface Factory {
-        fun create(): CreatePinComponent
+//    @Subcomponent.Factory
+//    interface Factory {
+//        fun create(): CreatePinComponent
+//    }
+
+    @Subcomponent.Builder
+    interface Builder {
+        fun build(): CreatePinComponent
     }
 
     fun getViewModel(): CreatePinViewModel

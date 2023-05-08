@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
             composable(ApartmentManagerDestinations.CREATE_PIN_ROUTE) {
                 val createPinComponent =
                     (application as ApartmentManagerApplication).appComponent.createPinComponent()
-                        .create()
+                        .build()
                 val createPinViewModel: CreatePinViewModel = daggerViewModel {
                     createPinComponent.getViewModel()
                 }
