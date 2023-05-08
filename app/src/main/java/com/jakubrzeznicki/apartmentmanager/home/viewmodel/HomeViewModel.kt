@@ -7,7 +7,9 @@ import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSou
 import com.jakubrzeznicki.apartmentmanager.di.ScreenScope
 import com.jakubrzeznicki.apartmentmanager.home.model.DeletePinData
 import com.jakubrzeznicki.apartmentmanager.home.model.HomeStatus
-import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {
+    private val compositeDisposable by lazy { CompositeDisposable() }
     private val viewModelState = MutableStateFlow(HomeViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
@@ -31,22 +34,37 @@ class HomeViewModel @Inject constructor(
 
     fun getPins() {
         viewModelScope.launch {
-            apartmentPinRepository.getLivePins().collect { pins ->
-                viewModelState.update {
-                    it.copy(pins = pins)
+            val disposable = apartmentPinRepository.getLivePins()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { pins ->
+                    viewModelState.update {
+                        it.copy(pins = pins)
+                    }
                 }
-            }
+            compositeDisposable.add(disposable)
+//            apartmentPinRepository.getLivePins().collect { pins ->
+//                viewModelState.update {
+//                    it.copy(pins = pins)
+//                }
+//            }
         }
     }
 
     fun deletePin(code: String) {
-        viewModelScope.launch {
-            val status = when (val result = apartmentPinRepository.deletePin(code)) {
-                RepositoryResult.Success -> HomeStatus.PinDeleted
-                is RepositoryResult.Error -> HomeStatus.PinDeleteError(result.errorMessage)
-            }
-            viewModelState.update { it.copy(status = status) }
-        }
+//        viewModelScope.launch {
+//            val status = when (val result = apartmentPinRepository.deletePin(code)) {
+//                RepositoryResult.Success -> {
+//                    //pobrac dane z bazy
+//                    HomeStatus.PinDeleted
+//                }
+//                is RepositoryResult.Error -> HomeStatus.PinDeleteError(result.errorMessage)
+//            }
+//            viewModelState.update { it.copy(status = status) }
+//        }
+        apartmentPinRepository.deletePin(code)
+        viewModelState.update { it.copy(status = HomeStatus.PinDeleted) }
+
     }
 
     fun showConfirmDeleteDialog(deletePinData: DeletePinData) {
@@ -59,6 +77,7 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        compositeDisposable.clear()
         Log.d("TEST_LOG", "onCleared HomeViewModel")
     }
 }

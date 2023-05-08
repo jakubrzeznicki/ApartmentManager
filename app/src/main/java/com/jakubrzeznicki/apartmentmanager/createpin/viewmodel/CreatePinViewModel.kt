@@ -8,8 +8,9 @@ import com.jakubrzeznicki.apartmentmanager.createpin.model.CreatePinStatus
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.ApartmentPinDataSource
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
 import com.jakubrzeznicki.apartmentmanager.di.ScreenScope
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class CreatePinViewModel @Inject constructor(
     private val apartmentPinRepository: ApartmentPinDataSource
 ) : ViewModel() {
+    private val compositeDisposable by lazy { CompositeDisposable() }
     private val viewModelState = MutableStateFlow(CreatePinViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
@@ -45,29 +47,33 @@ class CreatePinViewModel @Inject constructor(
     }
 
     fun createPin() {
-        viewModelScope.launch {
-            val name = viewModelState.value.name
-            if (name.isBlank()) {
-                viewModelState.update { it.copy(status = CreatePinStatus.EmptyName) }
-                return@launch
-            }
-            val nameIsNotUnique =
-                viewModelState.value.savedPins.map { it.name }.contains(viewModelState.value.name)
-            if (nameIsNotUnique) {
-                viewModelState.update { it.copy(status = CreatePinStatus.NameIsNotUnique) }
-                return@launch
-            }
-            val pin = Pin(viewModelState.value.code, viewModelState.value.name)
-            apartmentPinRepository.createPin(pin)
-            viewModelState.update { it.copy(status = CreatePinStatus.PinCreated) }
+        val name = viewModelState.value.name
+        if (name.isBlank()) {
+            viewModelState.update { it.copy(status = CreatePinStatus.EmptyName) }
+            return
         }
+        val nameIsNotUnique =
+            viewModelState.value.savedPins.map { it.name }.contains(viewModelState.value.name)
+        if (nameIsNotUnique) {
+            viewModelState.update { it.copy(status = CreatePinStatus.NameIsNotUnique) }
+            return
+        }
+        val pin = Pin(viewModelState.value.code, viewModelState.value.name)
+        val disposable = Completable.fromCallable {
+            apartmentPinRepository.createPin(pin)
+        }
+            //.subscribeOn(Schedulers.io())
+            //.observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                viewModelState.update { it.copy(status = CreatePinStatus.PinCreated) }
+            }
+        compositeDisposable.add(disposable)
     }
 
     private fun getPins() {
-        viewModelScope.launch {
-            val pins = apartmentPinRepository.getPins()
-            viewModelState.update { it.copy(savedPins = pins) }
-        }
+        val pins = apartmentPinRepository.getPins()
+        viewModelState.update { it.copy(savedPins = pins) }
+
     }
 
     @VisibleForTesting
@@ -96,6 +102,7 @@ class CreatePinViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        compositeDisposable.clear()
         Log.d("TEST_LOG", "onCleared CeratePinViewModel")
     }
 }

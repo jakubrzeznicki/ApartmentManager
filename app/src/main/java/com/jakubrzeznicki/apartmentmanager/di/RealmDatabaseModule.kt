@@ -1,10 +1,9 @@
 package com.jakubrzeznicki.apartmentmanager.di
 
-import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity
 import dagger.Module
 import dagger.Provides
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import javax.inject.Singleton
 
 /**
@@ -15,10 +14,19 @@ object RealmDatabaseModule {
 
     @Singleton
     @Provides
-    fun provideRealmDatabase(): Realm {
-        val configuration = RealmConfiguration.Builder(schema = setOf(PinEntity::class))
-            .compactOnLaunch()
+    fun provideRealmDatabase(): RealmConfiguration {
+        return RealmConfiguration.Builder()
+            .name(REALM_DB_NAME)
+            .schemaVersion(1)
+            .deleteRealmIfMigrationNeeded()
             .build()
-        return Realm.open(configuration)
     }
+
+    @Singleton
+    @Provides
+    fun provideRealm(config: RealmConfiguration): Realm {
+        return Realm.getInstance(config)
+    }
+
+    private const val REALM_DB_NAME = "app_apartment.realm"
 }

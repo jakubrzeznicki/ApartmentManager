@@ -1,13 +1,8 @@
 package com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local
 
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity
-import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity.Companion.CODE
-import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.model.PinEntity.Companion.NAME
-import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import io.reactivex.Flowable
+import io.realm.Realm
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,30 +13,39 @@ import javax.inject.Singleton
 class ApartmentPinLocal @Inject constructor(private val realm: Realm) :
     ApartmentPinLocalDataSource {
     override fun getPins(): List<PinEntity> {
-        return realm.query<PinEntity>().sort(NAME).find()
+        return realm
+            .where(PinEntity::class.java)
+            .findAllAsync()
+        //return realm.query<PinEntity>().sort(NAME).find()
     }
 
-    override fun getLivePins(): Flow<List<PinEntity>> {
-        return realm.query<PinEntity>().sort(NAME).asFlow().map { it.list }
+    override fun getLivePins(): Flowable<List<PinEntity>> {
+//        return Flowable.defer {
+//            Flowable.just(realm.query<PinEntity>().sort(NAME).find())
+//        }
+        return realm
+            .where(PinEntity::class.java)
+            .findAllAsync()
+            .asFlowable()
+            .distinctUntilChanged()
+            .map { it }
     }
 
-    override suspend fun createPin(pin: PinEntity) {
-        realm.write { copyToRealm(pin) }
+    override fun createPin(pin: PinEntity) {
+        realm.executeTransactionAsync { it.insertOrUpdate(pin) }
     }
 
-    override suspend fun deletePin(code: String): RepositoryResult {
-        return realm.write {
-            val pin = query<PinEntity>(query = "$CODE == $FIRST_PARAMETER", code).first().find()
-            try {
-                pin?.let { delete(it) }
-                RepositoryResult.Success
-            } catch (e: Exception) {
-                RepositoryResult.Error(e.message.orEmpty())
-            }
+    override fun deletePin(code: String) {
+        realm.executeTransactionAsync {
+            it.where(PinEntity::class.java)
+                .equalTo(CODE, code)
+                .findAll()
+                .deleteAllFromRealm()
         }
     }
 
     private companion object {
         const val FIRST_PARAMETER = "$0"
+        const val CODE = "code"
     }
 }

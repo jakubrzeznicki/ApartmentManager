@@ -4,9 +4,7 @@ import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.local.ApartmentPinL
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.mapper.toPin
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.mapper.toPinEntity
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
-import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import io.reactivex.Flowable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,17 +14,17 @@ import javax.inject.Singleton
 @Singleton
 class ApartmentPinRepository @Inject constructor(private val local: ApartmentPinLocalDataSource) :
     ApartmentPinDataSource {
-    override suspend fun getPins(): List<Pin> =
+    override fun getPins(): List<Pin> =
         local.getPins().map { pins -> pins.toPin() }
 
-    override fun getLivePins(): Flow<List<Pin>> =
+    override fun getLivePins(): Flowable<List<Pin>> =
         local.getLivePins().map { pins -> pins.map { it.toPin() } }
 
-    override suspend fun createPin(pin: Pin) {
+    override fun createPin(pin: Pin) {
         local.createPin(pin.toPinEntity())
     }
 
-    override suspend fun deletePin(code: String): RepositoryResult {
-        return local.deletePin(code)
+    override fun deletePin(code: String) {
+        local.deletePin(code)
     }
 }

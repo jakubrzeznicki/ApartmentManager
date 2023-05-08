@@ -1,15 +1,14 @@
 package com.jakubrzeznicki.apartmentmanager.data.apartmentpin
 
 import com.jakubrzeznicki.apartmentmanager.data.apartmentpin.model.Pin
-import com.jakubrzeznicki.apartmentmanager.utils.RepositoryResult
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.Flowable
 
 /**
  * Created by jrzeznicki on 14/04/2023.
  */
 interface ApartmentPinDataSource {
-    suspend fun getPins() : List<Pin>
-    fun getLivePins(): Flow<List<Pin>>
-    suspend fun createPin(pin: Pin)
-    suspend fun deletePin(code: String): RepositoryResult
+    fun getPins(): List<Pin>
+    fun getLivePins(): Flowable<List<Pin>>
+    fun createPin(pin: Pin)
+    fun deletePin(code: String)
 }
