@@ -11,7 +11,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -33,7 +32,6 @@ class HomeViewModel @Inject constructor(
         )
 
     fun getPins() {
-        viewModelScope.launch {
             val disposable = apartmentPinRepository.getLivePins()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -48,7 +46,6 @@ class HomeViewModel @Inject constructor(
 //                    it.copy(pins = pins)
 //                }
 //            }
-        }
     }
 
     fun deletePin(code: String) {

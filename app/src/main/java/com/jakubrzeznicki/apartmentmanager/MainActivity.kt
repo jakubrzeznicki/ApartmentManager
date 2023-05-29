@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
                 snackbarHost = { SnackbarHost(hostState = appState.snackbarHostState) }
             ) {
                 CustomNavHost(
-                    activity = this,
                     application = application as ApartmentManagerApplication,
                     navController = appState.navController,
                     showSnackbar = { message, duration ->
@@ -44,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun CustomNavHost(
-        activity: MainActivity,
         application: ApartmentManagerApplication,
         navController: NavHostController,
         showSnackbar: (String, SnackbarDuration) -> Unit
